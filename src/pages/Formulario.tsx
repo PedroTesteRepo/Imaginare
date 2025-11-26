@@ -17,7 +17,10 @@ export default function Formulario() {
     orcamento: '',
     hobbies: [] as string[],
     mensagem: '',
+    aceitouTermos: false,
   });
+
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const hobbiesOptions = [
     'Tecnologia',
@@ -33,8 +36,21 @@ export default function Formulario() {
   ];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    const { name, value, type } = e.target;
+
+    if (name === 'telefone') {
+      const numbersOnly = value.replace(/\D/g, '');
+      setFormData(prev => ({ ...prev, [name]: numbersOnly }));
+    } else if (type === 'checkbox') {
+      const target = e.target as HTMLInputElement;
+      setFormData(prev => ({ ...prev, [name]: target.checked }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
+
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
   };
 
   const toggleHobby = (hobby: string) => {
@@ -46,8 +62,29 @@ export default function Formulario() {
     }));
   };
 
+  const validateStep = (currentStep: number): boolean => {
+    const newErrors: { [key: string]: string } = {};
+
+    if (currentStep === 1) {
+      if (!formData.nome.trim()) newErrors.nome = 'Nome é obrigatório';
+      if (!formData.email.trim()) newErrors.email = 'Email é obrigatório';
+    } else if (currentStep === 2) {
+      if (!formData.empresa.trim()) newErrors.empresa = 'Empresa é obrigatória';
+      if (!formData.cargo.trim()) newErrors.cargo = 'Cargo é obrigatório';
+      if (!formData.tipoServico) newErrors.tipoServico = 'Tipo de serviço é obrigatório';
+      if (!formData.orcamento) newErrors.orcamento = 'Orçamento é obrigatório';
+    } else if (currentStep === 4) {
+      if (!formData.aceitouTermos) newErrors.aceitouTermos = 'Você deve aceitar os termos de uso';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleNext = () => {
-    if (step < 4) setStep(step + 1);
+    if (validateStep(step)) {
+      if (step < 4) setStep(step + 1);
+    }
   };
 
   const handlePrev = () => {
@@ -91,6 +128,7 @@ export default function Formulario() {
           orcamento: '',
           hobbies: [],
           mensagem: '',
+          aceitouTermos: false,
         });
         setSubmitted(false);
       }, 3000);
@@ -184,8 +222,10 @@ export default function Formulario() {
                     value={formData.telefone}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-200"
-                    placeholder="(11) 99999-9999"
+                    placeholder="11999999999"
+                    maxLength={11}
                   />
+                  <p className="text-xs text-neutral-500 mt-1">Apenas números</p>
                 </div>
               </div>
             )}
@@ -307,6 +347,29 @@ export default function Formulario() {
                     <p><span className="font-medium">Interesses:</span> {formData.hobbies.join(', ') || 'Nenhum selecionado'}</p>
                   </div>
                 </div>
+
+                <div className="border border-neutral-300 rounded-lg p-6">
+                  <div className="flex items-start gap-3">
+                    <input
+                      type="checkbox"
+                      id="termos"
+                      name="aceitouTermos"
+                      checked={formData.aceitouTermos}
+                      onChange={handleInputChange}
+                      className="mt-1 w-4 h-4 text-primary-600 border-neutral-300 rounded focus:ring-primary-500"
+                    />
+                    <label htmlFor="termos" className="text-sm text-neutral-700">
+                      Li e aceito os{' '}
+                      <a href="/termos" target="_blank" className="text-primary-600 hover:text-primary-700 font-medium underline">
+                        Termos de Uso
+                      </a>
+                      {' '}da IMAGINARE HUB *
+                    </label>
+                  </div>
+                  {errors.aceitouTermos && (
+                    <p className="text-red-600 text-sm mt-2 ml-7">{errors.aceitouTermos}</p>
+                  )}
+                </div>
               </div>
             )}
 
@@ -321,13 +384,18 @@ export default function Formulario() {
               </button>
 
               {step < 4 ? (
-                <button
-                  type="button"
-                  onClick={handleNext}
-                  className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-primary-600 to-accent-500 text-white px-6 py-3 rounded-lg font-medium hover:shadow-lg transition"
-                >
-                  Próximo <ArrowRight size={18} />
-                </button>
+                <div className="flex-1">
+                  <button
+                    type="button"
+                    onClick={handleNext}
+                    className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-primary-600 to-accent-500 text-white px-6 py-3 rounded-lg font-medium hover:shadow-lg transition"
+                  >
+                    Próximo <ArrowRight size={18} />
+                  </button>
+                  {Object.keys(errors).length > 0 && (
+                    <p className="text-red-600 text-sm mt-2 text-center">Preencha todos os campos obrigatórios</p>
+                  )}
+                </div>
               ) : (
                 <button
                   type="submit"

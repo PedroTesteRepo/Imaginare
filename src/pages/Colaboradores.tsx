@@ -7,36 +7,42 @@ export default function Colaboradores() {
       role: 'Diretora de Criatividade',
       icon: Sparkles,
       bio: 'Visionária com 15 anos de experiência em design estratégico.',
+      image: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=400',
     },
     {
       name: 'Carlos Santos',
       role: 'Tech Lead',
       icon: Code,
       bio: 'Especialista em tecnologia e inovação com paixão por resultados.',
+      image: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=400',
     },
     {
       name: 'Marina Costa',
       role: 'Designer UX/UI',
       icon: Palette,
       bio: 'Criadora de experiências digitais que encantam usuários.',
+      image: 'https://images.pexels.com/photos/733872/pexels-photo-733872.jpeg?auto=compress&cs=tinysrgb&w=400',
     },
     {
       name: 'Roberto Oliveira',
       role: 'Estrategista de Negócios',
       icon: Lightbulb,
       bio: 'Especialista em transformação digital e crescimento escalável.',
+      image: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=400',
     },
     {
       name: 'Juliana Ferreira',
       role: 'Gerente de Projetos',
       icon: Sparkles,
       bio: 'Professora em orquestrar equipes e entregar excelência.',
+      image: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=400',
     },
     {
       name: 'Lucas Alves',
       role: 'Desenvolvedor Full Stack',
       icon: Code,
       bio: 'Construtor de soluções robustas e escaláveis.',
+      image: 'https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=400',
     },
   ];
 
@@ -67,14 +73,18 @@ export default function Colaboradores() {
                     : 'border-accent-200 hover:border-accent-400'
                 }`}
               >
-                <div
-                  className={`h-32 bg-gradient-to-r ${
-                    isEven
-                      ? 'from-primary-500 to-primary-600'
-                      : 'from-accent-400 to-accent-500'
-                  } flex items-center justify-center group-hover:shadow-lg transition`}
-                >
-                  <Icon size={48} className="text-white" />
+                <div className="relative h-64 overflow-hidden">
+                  <img
+                    src={colab.image}
+                    alt={colab.name}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                  <div className={`absolute top-4 right-4 w-12 h-12 rounded-full bg-white/90 flex items-center justify-center ${
+                    isEven ? 'text-primary-600' : 'text-accent-600'
+                  }`}>
+                    <Icon size={24} />
+                  </div>
                 </div>
                 <div className="p-6">
                   <h3 className="text-xl font-bold text-neutral-900 mb-1">{colab.name}</h3>
